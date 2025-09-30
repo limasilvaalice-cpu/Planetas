@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Cadeados - index.html</title>
+  <style>
+    :root{--bg:#f3f6fb;--card:#ffffff;--accent:#2b6df6;--ok:#13a44d;--err:#e03e3e}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:linear-gradient(180deg,var(--bg),#edf2fb);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
+    .container{width:100%;max-width:980px}
+    h1{text-align:center;color:#0b2546;margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(12,40,80,0.08);display:flex;flex-direction:column;gap:12px}
+    .lock-row{display:flex;align-items:center;gap:12px}
+    .emoji{font-size:28px}
+    input[type="text"]{flex:1;padding:10px;border-radius:8px;border:1px solid #d6e2ff;background:#fbfdff}
+    button{padding:10px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    button.secondary{background:#6b7fdc}
+    .status{font-weight:600}
+    .status.ok{color:var(--ok)}
+    .status.err{color:var(--err)}
+    .hint{font-size:13px;color:#5b6b89}
+    .controls{display:flex;gap:8px}
+    footer{text-align:center;margin-top:18px;color:#5b6b89;font-size:13px}
+    .reveal{font-size:12px;padding:6px 8px;border-radius:6px;border:1px dashed #c7d3ff;background:transparent;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sistema de Cadeados — Insira as senhas</h1>
+
+    <p class="hint" style="text-align:center">Cada cadeado aceita apenas a senha associada. Tente desbloquear todos — exemplo de sistema cliente (não seguro para produção).</p>
+
+    <div class="grid" id="locks"></div>
+
+    <footer>Este é um exemplo educativo. Em produção, autenticação deve ser feita no servidor.</footer>
+  </div>
+
+  <script>
+    // Senhas fornecidas pelo usuário (já incluídas conforme pedido)
+    const passwords = [
+      '1997',
+      'gravidade',
+      '87354126',
+      'venus',
+      'alice'
+    ];
+
+    // Texto para cada cadeado (pode ser trocado)
+    const labels = [
+      'Cadeado 1',
+      'Cadeado 2',
+      'Cadeado 3',
+      'Cadeado 4',
+      'Cadeado 5'
+    ];
+
+    const locksContainer = document.getElementById('locks');
+
+    // Estado interno (não persistente)
+    const state = passwords.map(() => ({ unlocked:false, attempts:0 }));
+
+    function createLock(i){
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const title = document.createElement('div');
+      title.style.display = 'flex';
+      title.style.justifyContent = 'space-between';
+      title.style.alignItems = 'center';
+
+      const left = document.createElement('div');
+      left.className = 'lock-row';
+      left.innerHTML = `<span class="emoji">🔒</span><strong>${labels[i]}</strong>`;
+
+      const right = document.createElement('div');
+      right.innerHTML = `<span class="status" id="status-${i}">Trancado</span>`;
+
+      title.appendChild(left);
+      title.appendChild(right);
+
+      const inputRow = document.createElement('div');
+      inputRow.className = 'lock-row';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Digite a senha...';
+      input.id = `input-${i}`;
+      input.autocomplete = 'off';
+
+      const checkBtn = document.createElement('button');
+      checkBtn.textContent = 'Destravar';
+
+      const revealBtn = document.createElement('button');
+      revealBtn.className = 'reveal';
+      revealBtn.textContent = 'Mostrar dica';
+
+      inputRow.appendChild(input);
+      inputRow.appendChild(checkBtn);
+
+      const bottom = document.createElement('div');
+      bottom.style.display = 'flex';
+      bottom.style.justifyContent = 'space-between';
+      bottom.style.alignItems = 'center';
+
+      const attempts = document.createElement('div');
+      attempts.id = `attempts-${i}`;
+      attempts.textContent = 'Tentativas: 0';
+      attempts.className = 'hint';
+
+      const ctrl = document.createElement('div');
+      ctrl.className = 'controls';
+      ctrl.appendChild(revealBtn);
+
+      bottom.appendChild(attempts);
+      bottom.appendChild(ctrl);
+
+      card.appendChild(title);
+      card.appendChild(inputRow);
+      card.appendChild(bottom);
+
+      // Eventos
+      checkBtn.addEventListener('click', ()=> check(i));
+      input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') check(i); });
+
+      // Dica simples: quando clicado, mostra parte da senha (pequena ajuda)
+      revealBtn.addEventListener('click', ()=>{
+        // Mostra apenas o primeiro caractere e o tamanho — não mostra a senha inteira
+        const pw = passwords[i];
+        alert(`DICA: começa com '${pw[0]}' e tem ${pw.length} caracteres.`);
+      });
+
+      return card;
+    }
+
+    function render(){
+      locksContainer.innerHTML = '';
+      for(let i=0;i<passwords.length;i++){
+        locksContainer.appendChild(createLock(i));
+      }
+    }
+
+    function check(i){
+      const input = document.getElementById(`input-${i}`);
+      const status = document.getElementById(`status-${i}`);
+      const attempts = document.getElementById(`attempts-${i}`);
+      const val = (input.value || '').trim();
+
+      state[i].attempts += 1;
+      attempts.textContent = `Tentativas: ${state[i].attempts}`;
+
+      if(state[i].unlocked){
+        status.textContent = 'Já desbloqueado';
+        status.className = 'status ok';
+        return;
+      }
+
+      if(val === passwords[i]){
+        state[i].unlocked = true;
+        status.textContent = 'Desbloqueado';
+        status.className = 'status ok';
+        // animação simples: troca do emoji para aberto
+        const card = document.getElementById(`input-${i}`).closest('.card');
+        const emoji = card.querySelector('.emoji');
+        emoji.textContent = '🔓';
+        input.disabled = true;
+      } else {
+        status.textContent = 'Senha incorreta';
+        status.className = 'status err';
+        // se quiser, bloquear depois de N tentativas:
+        if(state[i].attempts >= 5 && !state[i].unlocked){
+          status.textContent = 'Bloqueado por segurança';
+          status.className = 'status err';
+          const inputEl = document.getElementById(`input-${i}`);
+          inputEl.disabled = true;
+        }
+      }
+    }
+
+    // Renderiza na inicialização
+    render();
+
+    // Função auxiliar para desbloquear todos (apenas para desenvolvimento)
+    window.__unlockAll = function(){
+      for(let i=0;i<passwords.length;i++){
+        const input = document.getElementById(`input-${i}`);
+        input.value = passwords[i];
+        check(i);
+      }
+    }
+  </script>
+</body>
+</html>
