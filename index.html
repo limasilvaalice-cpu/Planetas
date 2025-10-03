@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -65,23 +66,20 @@
         <div style="font-size:34px">🔒</div>
         <h1>Sistema de Cadeados — Insira as senhas</h1>
       </div>
-    </header>
+    </header><main>
+  <p class="small">Existem 5 cadeados. Cada um aceita **apenas** uma das senhas definidas. As senhas são: <em>1997, gravidade, 87354126, venus, júpiter</em>.
+  (o sistema de exemplo abaixo as verifica no cliente — ideal apenas para demonstração).</p>
 
-    <main>
-      <p class="small">Existem 5 cadeados. Cada um aceita **apenas** uma das senhas definidas. As senhas são: <em>1997, gravidade, 87354126, venus, júpiter</em>.
-      (o sistema de exemplo abaixo as verifica no cliente — ideal apenas para demonstração).</p>
-
-      <div class="grid" id="locksGrid">
-        <!-- Cards gerados via JS -->
-      </div>
-
-      <footer>
-        <div class="small">Dica: teste cada cadeado com a senha correspondente. Para reiniciar todos os cadeados, clique em "Resetar".</div>
-      </footer>
-    </main>
+  <div class="grid" id="locksGrid">
+    <!-- Cards gerados via JS -->
   </div>
 
-  <script>
+  <footer>
+    <div class="small">Dica: teste cada cadeado com a senha correspondente. Para reiniciar todos os cadeados, clique em "Resetar".</div>
+  </footer>
+</main>
+
+  </div>  <script>
     const locks = [
       {id: 'cadeado-1', title: 'Cadeado A', password: '1997', hint: 'Pode ser um ano'},
       {id: 'cadeado-2', title: 'Cadeado B', password: 'gravidade', hint: 'Uma força familiar'},
@@ -193,6 +191,5 @@
     });
 
     document.querySelector('.container main').appendChild(resetBtn);
-  </script>
-</body>
+  </script></body>
 </html>
