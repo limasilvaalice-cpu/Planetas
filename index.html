@@ -1,1 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Cadeados - Index.html</title>
+  <style>
+    :root{--accent:#8b5cf6;--success:#34d399;--danger:#fb7185;--muted:#cbd5e1}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:#f1f5f9;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background: radial-gradient(circle at 20% 20%, #1e3a8a 0%, transparent 40%),
+                  radial-gradient(circle at 80% 30%, #9333ea 0%, transparent 40%),
+                  radial-gradient(circle at 50% 80%, #0ea5e9 0%, transparent 50%),
+                  radial-gradient(circle at 70% 70%, #facc15 0%, transparent 40%),
+                  #000814;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+      z-index: -1;
+      animation: twinkle 6s infinite alternate;
+    }
+    @keyframes twinkle {
+      from {opacity: 0.7;}
+      to {opacity: 1;}
+    }
+    .container{width:100%;max-width:980px;background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);border-radius:16px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+    header h1{font-size:20px;margin:0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.1);padding:18px;border-radius:12px;position:relative;backdrop-filter:blur(4px)}
+    .lock-icon{font-size:40px;display:block;margin-bottom:12px}
+    .label{font-weight:600;margin-bottom:6px}
+    .hint{font-size:13px;color:var(--muted);margin-bottom:12px}
+    .input-row{display:flex;gap:8px}
+    input[type="password"], input[type="text"]{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.3);color:#f1f5f9}
+    button{padding:10px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all 0.2s}
+    button:hover{transform:scale(1.05);}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.3);color:inherit}
+    .message{margin-top:10px;font-size:14px}
+    .unlocked{color:var(--success)}
+    .failed{color:var(--danger)}
+    footer{margin-top:20px;color:var(--muted);font-size:13px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .small{font-size:12px;color:var(--muted)}
+    @media (max-width:480px){.lock-icon{font-size:34px}}
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="container">
+    <header>
+      <div class="controls">
+        <div style="font-size:34px">🔒</div>
+        <h1>Sistema de Cadeados — Insira as senhas</h1>
+      </div>
+    </header>
 
+    <main>
+      <p class="small">Existem 5 cadeados. Cada um aceita **apenas** uma das senhas definidas. As senhas são: <em>1997, gravidade, 87354126, venus, júpiter</em>.
+      (o sistema de exemplo abaixo as verifica no cliente — ideal apenas para demonstração).</p>
+
+      <div class="grid" id="locksGrid">
+        <!-- Cards gerados via JS -->
+      </div>
+
+      <footer>
+        <div class="small">Dica: teste cada cadeado com a senha correspondente. Para reiniciar todos os cadeados, clique em "Resetar".</div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const locks = [
+      {id: 'cadeado-1', title: 'Cadeado A', password: '1997', hint: 'Pode ser um ano'},
+      {id: 'cadeado-2', title: 'Cadeado B', password: 'gravidade', hint: 'Uma força familiar'},
+      {id: 'cadeado-3', title: 'Cadeado C', password: '87354126', hint: 'Sequência numérica'},
+      {id: 'cadeado-4', title: 'Cadeado D', password: 'venus', hint: 'Planeta ou deusa'},
+      {id: 'cadeado-5', title: 'Cadeado E', password: 'júpiter', hint: 'Maior planeta do sistema solar (observe acento)'}
+    ];
+
+    const grid = document.getElementById('locksGrid');
+
+    function createLockCard(lock){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = lock.id;
+
+      const icon = document.createElement('div');
+      icon.className = 'lock-icon';
+      icon.textContent = '🔒';
+      card.appendChild(icon);
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = lock.title;
+      card.appendChild(label);
+
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = lock.hint;
+      card.appendChild(hint);
+
+      const row = document.createElement('div');
+      row.className = 'input-row';
+
+      const input = document.createElement('input');
+      input.type = 'password';
+      input.placeholder = 'Digite a senha';
+      input.setAttribute('aria-label', lock.title + ' entrada de senha');
+
+      const submit = document.createElement('button');
+      submit.textContent = 'Abrir';
+
+      const toggle = document.createElement('button');
+      toggle.className = 'secondary';
+      toggle.textContent = 'Mostrar';
+
+      row.appendChild(input);
+      row.appendChild(submit);
+      row.appendChild(toggle);
+
+      card.appendChild(row);
+
+      const message = document.createElement('div');
+      message.className = 'message';
+      card.appendChild(message);
+
+      const storageKey = 'lockedState_' + lock.id;
+      const saved = localStorage.getItem(storageKey);
+      if(saved === 'unlocked'){
+        setUnlocked(card, icon, message);
+      }
+
+      submit.addEventListener('click', ()=> tryPassword(lock, input.value.trim(), card, icon, message, storageKey));
+      input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') submit.click(); });
+      toggle.addEventListener('click', ()=>{
+        if(input.type === 'password'){ input.type = 'text'; toggle.textContent = 'Ocultar'; }
+        else { input.type = 'password'; toggle.textContent = 'Mostrar'; }
+      });
+
+      return card;
+    }
+
+    function tryPassword(lock, attempt, card, icon, message, storageKey){
+      if(!attempt){ message.textContent = 'Digite uma senha.'; message.className = 'message failed'; return; }
+      if(attempt === lock.password){
+        setUnlocked(card, icon, message);
+        localStorage.setItem(storageKey, 'unlocked');
+      } else {
+        message.textContent = 'Senha incorreta.';
+        message.className = 'message failed';
+        if(navigator.vibrate) navigator.vibrate(100);
+      }
+    }
+
+    function setUnlocked(card, icon, message){
+      icon.textContent = '🔓';
+      message.textContent = 'Desbloqueado!';
+      message.className = 'message unlocked';
+      const inputs = card.querySelectorAll('input, button');
+      inputs.forEach(el=> el.disabled = true);
+      card.style.border = '1px solid rgba(52,211,153,0.4)';
+      card.style.boxShadow = '0 6px 18px rgba(16,185,129,0.4)';
+    }
+
+    locks.forEach(lock => grid.appendChild(createLockCard(lock)));
+
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = 'Resetar todos';
+    resetBtn.style.marginTop = '18px';
+    resetBtn.addEventListener('click', ()=>{
+      if(!confirm('Deseja resetar todos os cadeados (fechar todos)?')) return;
+      locks.forEach(l => {
+        localStorage.removeItem('lockedState_' + l.id);
+        const card = document.getElementById(l.id);
+        if(card){
+          const newCard = createLockCard(l);
+          card.replaceWith(newCard);
+        }
+      });
+    });
+
+    document.querySelector('.container main').appendChild(resetBtn);
+  </script>
+</body>
+</html>
