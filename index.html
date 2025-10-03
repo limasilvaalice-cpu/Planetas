@@ -43,7 +43,6 @@
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.1);padding:18px;border-radius:12px;position:relative;backdrop-filter:blur(4px)}
     .lock-icon{font-size:40px;display:block;margin-bottom:12px}
     .label{font-weight:600;margin-bottom:6px}
-    .hint{font-size:13px;color:var(--muted);margin-bottom:12px}
     .input-row{display:flex;gap:8px}
     input[type="password"], input[type="text"]{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.3);color:#f1f5f9}
     button{padding:10px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all 0.2s}
@@ -64,28 +63,25 @@
     <header>
       <div class="controls">
         <div style="font-size:34px">🔒</div>
-        <h1>Sistema de Cadeados — Insira as senhas</h1>
+        <h1>Sistema de Cadeados</h1>
       </div>
     </header><main>
-  <p class="small">Existem 5 cadeados. Cada um aceita **apenas** uma das senhas definidas. As senhas são: <em>1997, gravidade, 87354126, venus, júpiter</em>.
-  (o sistema de exemplo abaixo as verifica no cliente — ideal apenas para demonstração).</p>
-
   <div class="grid" id="locksGrid">
     <!-- Cards gerados via JS -->
   </div>
 
   <footer>
-    <div class="small">Dica: teste cada cadeado com a senha correspondente. Para reiniciar todos os cadeados, clique em "Resetar".</div>
+    <div class="small">Para reiniciar todos os cadeados, clique em "Resetar".</div>
   </footer>
 </main>
 
   </div>  <script>
     const locks = [
-      {id: 'cadeado-1', title: 'Cadeado A', password: '1997', hint: 'Pode ser um ano'},
-      {id: 'cadeado-2', title: 'Cadeado B', password: 'gravidade', hint: 'Uma força familiar'},
-      {id: 'cadeado-3', title: 'Cadeado C', password: '87354126', hint: 'Sequência numérica'},
-      {id: 'cadeado-4', title: 'Cadeado D', password: 'venus', hint: 'Planeta ou deusa'},
-      {id: 'cadeado-5', title: 'Cadeado E', password: 'júpiter', hint: 'Maior planeta do sistema solar (observe acento)'}
+      {id: 'cadeado-1', title: 'Cadeado 1', password: '1997'},
+      {id: 'cadeado-2', title: 'Cadeado 2', password: 'gravidade'},
+      {id: 'cadeado-3', title: 'Cadeado 3', password: '87354126'},
+      {id: 'cadeado-4', title: 'Cadeado 4', password: 'venus'},
+      {id: 'cadeado-5', title: 'Cadeado 5', password: 'júpiter'}
     ];
 
     const grid = document.getElementById('locksGrid');
@@ -104,11 +100,6 @@
       label.className = 'label';
       label.textContent = lock.title;
       card.appendChild(label);
-
-      const hint = document.createElement('div');
-      hint.className = 'hint';
-      hint.textContent = lock.hint;
-      card.appendChild(hint);
 
       const row = document.createElement('div');
       row.className = 'input-row';
@@ -192,4 +183,4 @@
 
     document.querySelector('.container main').appendChild(resetBtn);
   </script></body>
-</html>
+             </html>
